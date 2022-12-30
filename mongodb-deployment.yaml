@@ -15,6 +15,15 @@ spec:
       labels:
         app: mongo
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - moto.busche-cnc.com
       containers:
       - image: mongo:4.0.8
         name: mongo

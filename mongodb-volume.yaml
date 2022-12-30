@@ -9,6 +9,14 @@ spec:
     storage: 1Gi
   local:
     path: /data/mongo
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - moto.busche-cnc.com
   persistentVolumeReclaimPolicy: Retain
   storageClassName: mongodb-storageclass
   volumeMode: Filesystem
