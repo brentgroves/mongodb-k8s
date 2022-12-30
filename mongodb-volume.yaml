@@ -7,8 +7,12 @@ spec:
     - ReadWriteOnce
   capacity:
     storage: 1Gi
-  hostPath:
+  local:
     path: /data/mongo
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: mongodb-storageclass
+  volumeMode: Filesystem
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
