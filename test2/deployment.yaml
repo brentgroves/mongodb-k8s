@@ -1,0 +1,64 @@
+---
+  apiVersion: "apps/v1"
+  kind: "Deployment"
+  metadata: 
+    name: "mongo-db"
+    namespace: "development"
+  spec: 
+    selector: 
+      matchLabels: 
+        app: "mongo-db"
+    replicas: 1
+    strategy: 
+      type: "RollingUpdate"
+      rollingUpdate: 
+        maxSurge: 1
+        maxUnavailable: 1
+    minReadySeconds: 5
+    template: 
+      metadata: 
+        labels: 
+          app: "mongo-db"
+      spec: 
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - moto.busche-cnc.com
+
+        containers: 
+          - 
+            name: "mongo-db"
+            image: "mongo"
+            imagePullPolicy: "Always"
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongo-creds
+                key: username
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongo-creds
+                key: password
+                
+            ports: 
+              - 
+                containerPort: 27017
+                name: "mongodb"
+                
+            volumeMounts: 
+              - 
+                name: "mongodb-persistent-storage"
+                mountPath: "/data/db"
+                
+        volumes: 
+          - 
+            name: "mongodb-persistent-storage"
+            persistentVolumeClaim: 
+              claimName: "mongodb-pvc"
